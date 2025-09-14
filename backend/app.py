@@ -16,9 +16,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/api/health")
 def health():
-    return {"ok": True, "app": settings.app_name}
+    key = settings.openai_api_key or ""
+    masked = f"{key[:8]}…{key[-4:]}"
+    return {"ok": True, "app": settings.app_name, "key_seen": masked}
+
+
+
 
 @app.post("/api/match", response_model=MatchResponse)
 def api_match(payload: MatchInput):

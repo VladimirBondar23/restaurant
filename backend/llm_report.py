@@ -1,37 +1,54 @@
+import json
 from typing import List
+
 from backend.models import MatchInput, Rule
 from backend.settings import get_settings
 
-# OpenAI SDK (v1)
+# Gemini SDK
 try:
-    from openai import OpenAI
+    import google.generativeai as genai
 except Exception:
-    OpenAI = None
+    genai = None
 
 SYSTEM_PROMPT = """You are a compliance assistant for Israeli restaurant licensing.
-Given a business profile and a list of matched raw rules, create a concise, friendly report in English:
-Structure:
+Given a business profile and a list of matched raw rules, create a concise, friendly report in English.
+
+Goals:
+- Translate regulatory language into practical, owner-friendly steps.
+- Prioritize items (High, Medium, Low) and make next actions explicit.
+- Be precise about thresholds and responsible authorities.
+- Cite `source_ref` in parentheses where useful (e.g., "see Sec. 3.3.4").
+- Keep it short, scannable, and actionable.
+
+Structure (use headings and bullet points):
 1) Short Summary (what is required overall)
 2) High Priority Requirements
 3) Medium Priority Requirements
 4) Low Priority Requirements
-5) Recommendations & Clarifications (practical)
-For each requirement: what to do, which authority, any thresholds, documents to prepare, and next steps.
-Avoid legal jargon; write for a busy owner. Keep bullet points short.
-If something depends on thresholds, restate the threshold clearly.
+5) Recommendations & Clarifications (practical tips)
+
+Constraints:
+- Do NOT invent rules; only use what is provided in `matched_rules`.
+- If a rule depends on thresholds, restate the threshold clearly.
+- If something is ambiguous or missing, add a short “Note” on what to verify.
 """
 
 def _rules_to_bullets(rules: List[Rule]) -> dict:
-    prio = {"high": [], "medium": [], "low": []}
+    pr = {"high": [], "medium": [], "low": []}
     for r in rules:
-        prio.get(r.priority, prio["low"]).append(r)
-    return prio
+        pr.get(r.priority, pr["low"]).append(r)
+    return pr
 
 def _fallback_report(business: MatchInput, rules: List[Rule]) -> str:
     groups = _rules_to_bullets(rules)
+
     def fmt(rs: List[Rule]) -> str:
-        if not rs: return "- (none)\n"
-        return "".join([f"- **{r.category}**: {r.requirement} _(authority: {r.authority})_\n" for r in rs])
+        if not rs:
+            return "- (none)\n"
+        return "".join([
+            f"- **{r.category}**: {r.requirement} _(authority: {r.authority})_\n"
+            for r in rs
+        ])
 
     features_txt = ", ".join(business.features) if business.features else "none"
     return f"""## Summary of Requirements (Auto-generated)
@@ -46,35 +63,43 @@ def _fallback_report(business: MatchInput, rules: List[Rule]) -> str:
 ### Low Priority
 {fmt(groups["low"])}
 
-> Note: This is a fallback report generated without an LLM. Provide an OpenAI API key for a richer narrative.
+> Note: This is a fallback report generated without an LLM. Configure GOOGLE_API_KEY for a richer narrative.
 """
 
 def generate_report(business: MatchInput, rules: List[Rule]) -> str:
     settings = get_settings()
-    # If no API key or SDK missing, use fallback
-    if not settings.openai_api_key or OpenAI is None:
+
+    # If no SDK or no key, fall back
+    if genai is None or not settings.google_api_key:
         return _fallback_report(business, rules)
 
-    client = OpenAI(api_key=settings.openai_api_key)
-
-    user_payload = {
-        "business": business.model_dump(),
-        "matched_rules": [r.model_dump() for r in rules]
-    }
-
-    content = [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": f"JSON:\n{user_payload}"}
-    ]
-
     try:
-        resp = client.chat.completions.create(
-            model=settings.openai_model,
-            messages=content,
-            temperature=0.3,
+        # Configure Gemini
+        genai.configure(api_key=settings.google_api_key)
+
+        # IMPORTANT: use model_name, not model
+        model = genai.GenerativeModel(
+            model_name=settings.gemini_model,
+            system_instruction=SYSTEM_PROMPT
         )
-        text = resp.choices[0].message.content.strip()
+
+        user_payload = {
+            "business": business.model_dump(),
+            "matched_rules": [r.model_dump() for r in rules]
+        }
+
+        resp = model.generate_content(
+            [json.dumps(user_payload, ensure_ascii=False)],
+            generation_config={"temperature": 0.3}
+        )
+
+        text = (getattr(resp, "text", "") or "").strip()
+        if not text:
+            return _fallback_report(business, rules) + (
+                "\n\n> Note: Gemini returned no text. Showing fallback."
+            )
         return text
+
     except Exception as e:
-        # Fallback on error
-        return _fallback_report(business, rules) + f"\n\n> ⚠️ OpenAI error: {e}"
+        # Soft failure: return fallback plus a short note
+        return _fallback_report(business, rules) + f"\n\n> Note: Gemini error: {e}"
