@@ -1,4 +1,4 @@
-# API Documentation
+# API Documentation (Gemini Version)
 
 Base URL: `http://localhost:8000`
 
@@ -7,7 +7,7 @@ Base URL: `http://localhost:8000`
 ## Health
 
 **GET** `/api/health`  
-Returns a simple health payload.
+Simple health check.
 
 **Response 200**
 ```json
@@ -48,7 +48,7 @@ Filters the ruleset (`rules.json`) based on the provided business profile.
         "requirement": "Install compliant kitchen ventilation and hood per Israeli standard for businesses over 50 m² or 20 seats that use gas.",
         "authority": "Ministry of Health / Fire Brigade / Municipality",
         "priority": "high",
-        "source_ref": "Section 3.1 – Kitchen ventilation"
+        "source_ref": "Kitchen ventilation (general); local standards"
       },
       "matched_reason": "size_m2 ≥ 50; seats ≥ 20; features: uses_gas"
     }
@@ -58,15 +58,15 @@ Filters the ruleset (`rules.json`) based on the provided business profile.
 ```
 
 ### Notes
-- `matched_reason` explains why each rule matched (threshold/feature conditions).
-- The full ruleset path can be configured via `RULES_PATH` (defaults to `backend/data/rules.json`).
+- `matched_reason` explains why each rule matched (thresholds/features).
+- The rules file path can be configured with `RULES_PATH` (default `backend/data/rules.json`).
 
 ---
 
-## Generate Report
+## Generate Report (Gemini)
 
 **POST** `/api/report`  
-Runs the matcher and then generates a narrative report using OpenAI (if `OPENAI_API_KEY` is set) or a deterministic fallback.
+Runs the matcher and then generates a narrative report using **Gemini** (if `GOOGLE_API_KEY` is set) or a deterministic fallback otherwise.
 
 ### Request Body
 Same as `/api/match`
@@ -82,44 +82,25 @@ Same as `/api/match`
 ### Response 200
 ```json
 {
-  "report_markdown": "## Summary of Requirements (Auto-generated)\n**Business profile**: area 65 m², 30 seats, features: uses_gas, serves_meat.\n\n### High Priority\n- **Safety**: Install compliant kitchen ventilation ...\n",
+  "report_markdown": "## Summary of Requirements...",
   "matched_count": 3,
   "matched_ids": ["ventilation_required", "gas_certification", "grease_trap"],
-  "raw_rules": [
-    {
-      "id": "ventilation_required",
-      "category": "Safety",
-      "applies_if": {
-        "min_size_m2": 50,
-        "max_size_m2": null,
-        "min_seats": 20,
-        "max_seats": null,
-        "features": ["uses_gas"]
-      },
-      "requirement": "Install compliant kitchen ventilation and hood per Israeli standard for businesses over 50 m² or 20 seats that use gas.",
-      "authority": "Ministry of Health / Fire Brigade / Municipality",
-      "priority": "high",
-      "source_ref": "Section 3.1 – Kitchen ventilation"
-    }
-  ]
+  "raw_rules": [ { /* Rule objects */ } ]
 }
 ```
 
 ### Behavior
-- If `OPENAI_API_KEY` is **not** configured or the OpenAI call fails, the endpoint returns a structured fallback report.
+- If `GOOGLE_API_KEY` is **not** configured or the Gemini call fails, the endpoint returns a structured **fallback** report.
 - `report_markdown` is Markdown-formatted text; the frontend performs a light conversion to HTML.
 
 ---
 
 ## Error Handling
 
-**Response 400**  
-Returned if the payload is malformed (e.g., negative values).
+**Response 400** — invalid payload (e.g., negative numbers).  
+**Response 500** — unexpected server errors or rule loading issues.
 
-**Response 500**  
-Returned for unexpected server errors or rule loading issues.
-
-Example error body:
+Example error:
 ```json
 { "detail": "Error message here" }
 ```
@@ -138,7 +119,7 @@ Match:
 curl -s -X POST http://localhost:8000/api/match   -H "Content-Type: application/json"   -d '{"size_m2":65,"seats":30,"features":["uses_gas","serves_meat"]}'
 ```
 
-Report:
+Report (Gemini):
 ```bash
 curl -s -X POST http://localhost:8000/api/report   -H "Content-Type: application/json"   -d '{"size_m2":65,"seats":30,"features":["uses_gas","serves_meat"]}'
 ```
@@ -147,8 +128,8 @@ curl -s -X POST http://localhost:8000/api/report   -H "Content-Type: application
 
 ## Environment & Config
 
-- `OPENAI_API_KEY` (optional): if set, the report uses OpenAI Chat Completions.
-- `OPENAI_MODEL` (optional): defaults to `gpt-4o-mini`.
-- `RULES_PATH` (optional): path to the rules JSON (default `backend/data/rules.json`).
+- `GOOGLE_API_KEY` (required for LLM reports): your Gemini API key.
+- `GEMINI_MODEL` (optional): defaults to `gemini-1.5-flash`.
+- `RULES_PATH` (optional): path to the rules JSON (`backend/data/rules.json`).
 
 CORS: The backend enables CORS for localhost. Adjust `allow_origins` in `backend/settings.py` if needed.

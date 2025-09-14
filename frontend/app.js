@@ -1,4 +1,3 @@
-// Adjust if your backend runs elsewhere:
 const API_BASE = "http://localhost:8000";
 
 function getPayload() {

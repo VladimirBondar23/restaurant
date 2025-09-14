@@ -1,57 +1,51 @@
-# Development Log
+# Development Log (Gemini Migration)
 
-✅ **Goals**
+## 2025‑09‑14 — Switch to Gemini
+- Replaced OpenAI integration with **Google Gemini**.
+- Added `google-generativeai` to `requirements.txt`; removed `openai`/`httpx` pins.
+- Updated `backend/llm_report.py`:
+  - `GenerativeModel(model_name=..., system_instruction=...)`
+  - `generate_content([json_payload], generation_config={"temperature": 0.3})`
+  - Return `resp.text` with graceful fallback on exceptions.
+- Updated `backend/settings.py`:
+  - `.env` loading via `load_dotenv(find_dotenv(), override=True)`
+  - New env vars: `GOOGLE_API_KEY`, `GEMINI_MODEL` (default `gemini-1.5-flash`)
+- Updated docs in `docs/` (architecture, api, prompts, this devlog).
 
-- Build a working end-to-end system that accepts restaurant info and returns licensing requirements.
-- Focus on LLM-generated explanations.
-- Use simple frontend + JSON backend without complex DB.
+## Earlier — Rule Engine & Frontend
+- Implemented deterministic matcher in `backend/matching.py` to filter `rules.json` by:
+  - `min_size_m2`, `max_size_m2`, `min_seats`, `max_seats`
+  - feature flags (e.g., `uses_gas`, `serves_meat`, `serves_alcohol`, `open_after_23`, `outdoor_events`, `has_outdoor_area`)
+- Extended `rules.json` with grounded items from the source PDF (subset):
+  - Ventilation, gas certification, grease trap
+  - Alcohol signage/ID check, CCTV placement/specs (for alcohol/late hours)
+  - Potable water standards, solid waste handling
+  - External lighting for outdoor frontage, outdoor events cups
+- Frontend (vanilla HTML/JS/CSS):
+  - Questionnaire form + features as checkboxes
+  - Calls `/api/report`, renders markdown-like output, shows matched rules
 
----
+## Challenges & Fixes
+- **Stale server instances** caused mixed outputs (OpenAI text still showing). Fixed by killing stray `python/uvicorn` processes and restarting on a new port.
+- **Gemini SDK arg mismatch** (`model` vs `model_name`). Fixed by using `model_name`.
+- **Env precedence** issues. Resolved by using `find_dotenv(..., override=True)` so `.env` wins over shell envs.
+- **Secret scanning on GitHub** blocked pushes when example looked like a real key. Fixed `.env.example` to use placeholders only and rewrote commit history.
 
-🔨 **What was built**
+## Testing & Verification
+- Manual curl tests for `/api/health`, `/api/match`, `/api/report`.
+- Sanity check route (temporary) to confirm provider and masked key presence.
+- Visual check in the frontend for:
+  - No LLM key → fallback note appears
+  - With valid Gemini key → natural, sectioned narrative appears
 
-- `rules.json` from real-life PDF (subset for demo).
-- Frontend form → calls backend → calls AI.
-- Fallback reporting logic if OpenAI is unavailable.
-- Match engine supports min/max + feature-based filtering.
-- Markdown-to-HTML rendering in frontend.
-- Git repo structured for clarity and deployment.
+## Future Work
+- Expand rules to cover fire protection, sanitary facility counts, accessibility, noise/hours, sidewalk seating permits, smoking areas, security staffing.
+- Export PDF report; include clickable citations from `source_ref`.
+- Admin UI for rule editing and threshold management.
+- Optional provider switch (OpenAI/Gemini) via env for A/B comparison.
+- Unit tests for rule edge cases and feature combinations.
 
----
-
-⚠️ **Challenges**
-
-| Issue                                 | How it was solved                                          |
-|--------------------------------------|-------------------------------------------------------------|
-| GitHub blocked push due to secret key| Rewrote commit after removing real-looking API key         |
-| LLM wasn't formatting bullets well   | Adjusted system prompt with structure hints                |
-| PDF parsing was messy                | Manually extracted subset and simulated parsing            |
-
----
-
-🚀 **Tools Used**
-
-- **ChatGPT**: helped code faster with FastAPI, prompt crafting  
-- **Cursor IDE**: assisted with backend-frontend syncing and refactors  
-- **FastAPI**: rapid API building + built-in docs  
-- **OpenAI API**: core for report generation  
-- **Fallback mode**: added offline safe fallback if no API key exists
-
----
-
-💡 **Improvements for Future**
-
-- Full PDF/Word ingestion with better NLP + section recognition.  
-- Add support for Hebrew report generation.  
-- Make the rules editable through an admin UI.  
-- Export reports as downloadable PDF.  
-- Add more industries: bakeries, bars, food trucks.  
-- Add login/authentication for consultants vs business owners.
-
----
-
-🧠 **Key Takeaways**
-
-- Matching rules via JSON + features is fast and works well for POC.  
-- AI output quality is greatly affected by system prompts.  
-- A small, focused backend is enough for powerful smart systems when combined with LLMs.
+## Tools Used
+- **FastAPI**, **Pydantic**, **google-generativeai**
+- **Cursor / Copilot / ChatGPT** for scaffolding and prompt iteration
+- **pytest** for matcher sanity tests

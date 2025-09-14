@@ -4,7 +4,6 @@ from typing import List
 from backend.models import MatchInput, Rule
 from backend.settings import get_settings
 
-# Gemini SDK
 try:
     import google.generativeai as genai
 except Exception:
@@ -74,10 +73,8 @@ def generate_report(business: MatchInput, rules: List[Rule]) -> str:
         return _fallback_report(business, rules)
 
     try:
-        # Configure Gemini
         genai.configure(api_key=settings.google_api_key)
 
-        # IMPORTANT: use model_name, not model
         model = genai.GenerativeModel(
             model_name=settings.gemini_model,
             system_instruction=SYSTEM_PROMPT
@@ -101,5 +98,4 @@ def generate_report(business: MatchInput, rules: List[Rule]) -> str:
         return text
 
     except Exception as e:
-        # Soft failure: return fallback plus a short note
         return _fallback_report(business, rules) + f"\n\n> Note: Gemini error: {e}"

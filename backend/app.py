@@ -17,13 +17,6 @@ app.add_middleware(
 )
 
 
-@app.get("/api/health")
-def health():
-    key = settings.openai_api_key or ""
-    masked = f"{key[:8]}…{key[-4:]}"
-    return {"ok": True, "app": settings.app_name, "key_seen": masked}
-
-
 
 
 @app.post("/api/match", response_model=MatchResponse)
