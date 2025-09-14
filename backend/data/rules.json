@@ -1,0 +1,204 @@
+[
+  {
+    "id": "ventilation_required",
+    "category": "Safety",
+    "applies_if": {
+      "min_size_m2": 50,
+      "max_size_m2": null,
+      "min_seats": 20,
+      "max_seats": null,
+      "features": ["uses_gas"]
+    },
+    "requirement": "Install compliant kitchen ventilation and hood per Israeli standard for businesses over 50 m² or 20 seats that use gas.",
+    "authority": "Ministry of Health / Fire Brigade / Municipality",
+    "priority": "high",
+    "source_ref": "Kitchen ventilation (general); local standards"
+  },
+  {
+    "id": "grease_trap",
+    "category": "Environment",
+    "applies_if": {
+      "min_size_m2": 0,
+      "max_size_m2": null,
+      "min_seats": 0,
+      "max_seats": null,
+      "features": ["serves_meat"]
+    },
+    "requirement": "Install a grease trap and keep documented maintenance for businesses that serve meat.",
+    "authority": "Municipality",
+    "priority": "medium",
+    "source_ref": "Municipal sewer/fats guidance"
+  },
+  {
+    "id": "gas_certification",
+    "category": "Safety",
+    "applies_if": {
+      "min_size_m2": 0,
+      "max_size_m2": null,
+      "min_seats": 0,
+      "max_seats": null,
+      "features": ["uses_gas"]
+    },
+    "requirement": "Annual certification of the gas system by a licensed installer and proper safety signage.",
+    "authority": "Licensed Gas Authority / Municipality",
+    "priority": "high",
+    "source_ref": "Gas safety (general)"
+  },
+  {
+    "id": "delivery_temp_logs",
+    "category": "Health",
+    "applies_if": {
+      "min_size_m2": 0,
+      "max_size_m2": null,
+      "min_seats": 0,
+      "max_seats": null,
+      "features": ["delivery"]
+    },
+    "requirement": "Maintain food temperature logs during delivery and use appropriate transport equipment.",
+    "authority": "Ministry of Health",
+    "priority": "low",
+    "source_ref": "Food transport (general)"
+  },
+
+  {
+    "id": "alcohol_signage_id_check",
+    "category": "Public Safety",
+    "applies_if": {
+      "min_size_m2": 0,
+      "max_size_m2": null,
+      "min_seats": 0,
+      "max_seats": null,
+      "features": ["serves_alcohol"]
+    },
+    "requirement": "Post the legal notice that alcohol is not sold/served to under-18s; verify ID. Sign must be 50×40 cm, black letters on white, letter size 2.5×2.5 cm, mounted at 1.80–2.20 m and illuminated during opening hours.",
+    "authority": "Israel Police / Municipality",
+    "priority": "high",
+    "source_ref": "Sec. 3.6 / 3.6.1 (alcohol sales signage and ID check)"
+  },
+
+  {
+    "id": "cctv_placement_alcohol",
+    "category": "Security",
+    "applies_if": {
+      "min_size_m2": 0,
+      "max_size_m2": null,
+      "min_seats": 0,
+      "max_seats": null,
+      "features": ["serves_alcohol"]
+    },
+    "requirement": "Install CCTV covering the entrance (facing outward) and the business façade outward to the specified distance; interior cameras must enable facial identification at entry.",
+    "authority": "Israel Police",
+    "priority": "high",
+    "source_ref": "Sec. 3.3.2 (camera location/coverage)"
+  },
+  {
+    "id": "cctv_specs_alcohol",
+    "category": "Security",
+    "applies_if": {
+      "min_size_m2": 0,
+      "max_size_m2": null,
+      "min_seats": 0,
+      "max_seats": null,
+      "features": ["serves_alcohol"]
+    },
+    "requirement": "CCTV must support auto exposure/iris, night recording, ≥25 FPS, avoid aiming at bright light, enable facial identification at entry. Recordings kept ≥14 days, at ≥1.3 MP (or equivalent), exportable to removable media, and viewable on a connected screen.",
+    "authority": "Israel Police",
+    "priority": "high",
+    "source_ref": "Sec. 3.3.3 (recording method), Sec. 3.3.4 (retention/resolution/export/viewing)"
+  },
+
+  {
+    "id": "cctv_placement_night",
+    "category": "Security",
+    "applies_if": {
+      "min_size_m2": 0,
+      "max_size_m2": null,
+      "min_seats": 0,
+      "max_seats": null,
+      "features": ["open_after_23"]
+    },
+    "requirement": "Install CCTV covering the entrance (facing outward) and the business façade outward to the specified distance; interior cameras must enable facial identification at entry.",
+    "authority": "Israel Police",
+    "priority": "high",
+    "source_ref": "Sec. 3.3.2 (camera location/coverage)"
+  },
+  {
+    "id": "cctv_specs_night",
+    "category": "Security",
+    "applies_if": {
+      "min_size_m2": 0,
+      "max_size_m2": null,
+      "min_seats": 0,
+      "max_seats": null,
+      "features": ["open_after_23"]
+    },
+    "requirement": "CCTV must support auto exposure/iris, night recording, ≥25 FPS, avoid aiming at bright light, enable facial ID at entry. Recordings kept ≥14 days at ≥1.3 MP (or equivalent), exportable to removable media, and viewable on a connected screen.",
+    "authority": "Israel Police",
+    "priority": "high",
+    "source_ref": "Sec. 3.3.3 (recording method), Sec. 3.3.4 (retention/resolution/export/viewing)"
+  },
+
+  {
+    "id": "outdoor_events_cups",
+    "category": "Public Safety",
+    "applies_if": {
+      "min_size_m2": 0,
+      "max_size_m2": null,
+      "min_seats": 0,
+      "max_seats": null,
+      "features": ["outdoor_events"]
+    },
+    "requirement": "For outdoor or temporary events, all beverages (alcoholic and non-alcoholic) must be served in non-rigid plastic cups only.",
+    "authority": "Israel Police / Municipality",
+    "priority": "medium",
+    "source_ref": "Sec. 3.6.2 (outdoor/temporary events)"
+  },
+
+  {
+    "id": "potable_water_standards",
+    "category": "Health",
+    "applies_if": {
+      "min_size_m2": 0,
+      "max_size_m2": null,
+      "min_seats": 0,
+      "max_seats": null,
+      "features": []
+    },
+    "requirement": "Install and maintain potable water systems in line with Israeli standards (e.g., TI 1205 for water supply systems, TI 1525 for building maintenance/services, TI 5452 for products in contact with drinking water) and Ministry of Health guidance.",
+    "authority": "Ministry of Health",
+    "priority": "high",
+    "source_ref": "Chapter on water supply: TI 1205, TI 1525, TI 5452; MoH guidance"
+  },
+
+  {
+    "id": "solid_waste_handling",
+    "category": "Sanitation",
+    "applies_if": {
+      "min_size_m2": 0,
+      "max_size_m2": null,
+      "min_seats": 0,
+      "max_seats": null,
+      "features": []
+    },
+    "requirement": "Provide sufficient lidded containers and designated storage to prevent nuisances; keep waste room sanitary; comply with planning regulations for refuse storage and removal.",
+    "authority": "Municipality / Ministry of Health",
+    "priority": "medium",
+    "source_ref": "Sec. 4.10.3 (solid waste); Planning & Building Regulations"
+  },
+
+  {
+    "id": "external_lighting_operational",
+    "category": "Safety",
+    "applies_if": {
+      "min_size_m2": 0,
+      "max_size_m2": null,
+      "min_seats": 0,
+      "max_seats": null,
+      "features": ["has_outdoor_area"]
+    },
+    "requirement": "Maintain operational exterior lighting at all times for entrances and façade areas used by the public.",
+    "authority": "Israel Police / Municipality",
+    "priority": "low",
+    "source_ref": "Sec. 3.4.2 (external lighting)"
+  }
+]

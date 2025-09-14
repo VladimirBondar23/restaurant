@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Business Licensing Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Business Licensing Assistant (Restaurants)</h1>
+
+    <section class="card">
+      <h2>Questionnaire</h2>
+
+      <div class="grid">
+        <label>Area (m²)
+          <input type="number" id="size" min="0" step="0.1" placeholder="e.g., 65" />
+        </label>
+
+        <label>Seats
+          <input type="number" id="seats" min="0" step="1" placeholder="e.g., 30" />
+        </label>
+      </div>
+
+      <fieldset>
+        <legend>Features</legend>
+        <label class="option"><input type="checkbox" value="uses_gas" class="feature"> <span>Uses gas</span></label>
+        <label class="option"><input type="checkbox" value="serves_meat" class="feature"> <span>Serves meat</span></label>
+        <label class="option"><input type="checkbox" value="delivery" class="feature"> <span>Delivery</span></label>
+        <label class="option"><input type="checkbox" value="serves_alcohol" class="feature"> <span>Serves alcohol</span></label>
+        <label class="option"><input type="checkbox" value="open_after_23" class="feature"> <span>Open after 23:00</span></label>
+        <label class="option"><input type="checkbox" value="outdoor_events" class="feature"> <span>Outdoor / temporary events</span></label>
+        <label class="option"><input type="checkbox" value="has_outdoor_area" class="feature"> <span>Has outdoor frontage/area</span></label>
+      </fieldset>
+
+      <div class="actions">
+        <button id="btn-report" type="button">Generate Report</button>
+        <span id="status" class="muted" role="status" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Result</h2>
+      <div id="result-meta" class="muted"></div>
+      <div id="report" class="report"></div>
+      <div id="matched" class="matched"></div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
