@@ -1,0 +1,62 @@
+[
+  {
+    "id": "ventilation_required",
+    "category": "Safety",
+    "applies_if": {
+      "min_size_m2": 50,
+      "max_size_m2": null,
+      "min_seats": 20,
+      "max_seats": null,
+      "features": ["uses_gas"]
+    },
+    "requirement": "Install compliant kitchen ventilation and hood per Israeli standard for businesses over 50 m² or 20 seats that use gas.",
+    "authority": "Ministry of Health / Fire Brigade / Municipality",
+    "priority": "high",
+    "source_ref": "Section 3.1 – Kitchen ventilation"
+  },
+  {
+    "id": "grease_trap",
+    "category": "Environment",
+    "applies_if": {
+      "min_size_m2": 0,
+      "max_size_m2": null,
+      "min_seats": 0,
+      "max_seats": null,
+      "features": ["serves_meat"]
+    },
+    "requirement": "Install a grease trap and keep documented maintenance for businesses that serve meat.",
+    "authority": "Municipality",
+    "priority": "medium",
+    "source_ref": "Appendix B – Sewer & fats"
+  },
+  {
+    "id": "gas_certification",
+    "category": "Safety",
+    "applies_if": {
+      "min_size_m2": 0,
+      "max_size_m2": null,
+      "min_seats": 0,
+      "max_seats": null,
+      "features": ["uses_gas"]
+    },
+    "requirement": "Annual certification of the gas system by a licensed installer and proper safety signage.",
+    "authority": "Licensed Gas Authority / Municipality",
+    "priority": "high",
+    "source_ref": "Section 4 – Gas safety"
+  },
+  {
+    "id": "delivery_temp_logs",
+    "category": "Health",
+    "applies_if": {
+      "min_size_m2": 0,
+      "max_size_m2": null,
+      "min_seats": 0,
+      "max_seats": null,
+      "features": ["delivery"]
+    },
+    "requirement": "Maintain food temperature logs during delivery and use appropriate transport equipment.",
+    "authority": "Ministry of Health",
+    "priority": "low",
+    "source_ref": "Section 6 – Food transport"
+  }
+]
